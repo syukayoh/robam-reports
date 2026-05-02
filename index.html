@@ -1,187 +1,272 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>方太竞品情报 · 中央指挥舱</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Noto Sans SC', sans-serif; background-color: #0f1115; color: #e2e8f0; }
-        .fotile-gold { color: #d4af37; }
-        .fotile-bg-gold { background-color: #d4af37; }
-        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .login-gradient { background: radial-gradient(circle at center, #1e293b 0%, #0f1115 100%); }
-        .report-card:hover { transform: translateY(-5px); transition: all 0.3s ease; border-color: #d4af37; }
-    </style>
-</head>
-<body class="min-h-screen">
 
-    <!-- 登录界面 -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center login-gradient">
-        <div class="glass-card p-8 rounded-2xl w-full max-w-md text-center shadow-2xl">
-            <div class="mb-6">
-                <div class="w-20 h-20 fotile-bg-gold rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg">
-                    <svg class="w-10 h-10 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                    </svg>
-                </div>
-                <h1 class="text-2xl font-bold tracking-widest text-white">竞品情报 · 指挥舱</h1>
-                <p class="text-slate-400 mt-2 text-sm">FOTILE STRATEGIC INTELLIGENCE</p>
+    <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海尔/卡萨帝战略穿透报告 (v16.5 巅峰版)</title>
+    <style>body { font-family: system-ui; background:#f4f7f6; padding:20px; } .container { max-width:1300px; margin:0 auto; }</style>
+    </head><body><div class="container">
+    <div style="background:#003366; color:white; padding:40px; border-radius:15px; margin-bottom:40px; position:relative; overflow:hidden;">
+        <div style="position:relative; z-index:2;">
+            <h1 style="margin:0; font-size:32px;">🛡️ 海尔/卡萨帝 · 战略情报看板 (v16.5)</h1>
+            <p style="opacity:0.8; margin-top:10px;">模式：全维度专家穿透 | 状态：多维数据已对齐 | 级别：Top Secret</p>
+        </div>
+        <div style="position:absolute; right:-50px; top:-50px; font-size:200px; color:rgba(255,255,255,0.05); transform:rotate(-15deg);">FOTILE</div>
+    </div>
+    
+    <div style="background:#fff; border-radius:15px; padding:35px; margin-bottom:40px; border-left:12px solid #E67E22; box-shadow:0 15px 40px rgba(0,0,0,0.08);">
+        <h2 style="color:#003366; margin-top:0; font-size:26px;">📊 全量数据盲审：3-4月技术重心穿透</h2>
+        <div style="display:flex; flex-wrap:wrap; gap:40px;">
+            <div style="flex:1.5; min-width:500px; line-height:1.9; color:#2c3e50; font-size:15px;">
+                <div style="margin-bottom:20px;"><b>核心穿透：</b>海尔在本期布局中表现出极强的“场景粘性”。洗护类专利不再纠结于电机转速，而是全面转向“衣物识别算法”。</div>
+                <div style="font-size:13px; color:#666;">关键词频次对比：衣物 (439) > 产品 (303) > 外观设计 (290) > 处理 (262)</div>
             </div>
-            <div class="space-y-4">
-                <input type="password" id="password" placeholder="请输入访问权限口令" 
-                    class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-center focus:outline-none focus:border-gold-500 transition-all">
-                <button onclick="handleLogin()" id="login-btn"
-                    class="w-full fotile-bg-gold text-slate-900 font-bold py-3 rounded-lg hover:opacity-90 transition-all shadow-lg active:scale-95">
-                    验证身份并进入
-                </button>
-                <p id="error-msg" class="text-red-400 text-xs hidden">口令无效，请重新输入或咨询管理员</p>
+            <div style="flex:1; min-width:350px;">
+                <canvas id="haierV16Chart"></canvas>
             </div>
         </div>
     </div>
-
-    <!-- 主界面 -->
-    <div id="main-content" class="hidden opacity-0 transition-opacity duration-1000 p-6 lg:p-12">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-12 border-b border-slate-800 pb-8">
-            <div>
-                <h2 class="text-3xl font-bold text-white tracking-tight">
-                    方太竞品情报 <span class="fotile-gold">中央指挥舱</span>
-                </h2>
-                <p class="text-slate-400 mt-1 uppercase text-xs tracking-widest">Real-time Competitor Patent Analysis Dashboard</p>
+    
+    
+        <div style="background:white; border-radius:15px; padding:30px; margin-bottom:40px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
+            <div style="font-size:24px; color:#003366; font-weight:bold; border-bottom:3px solid #E67E22; padding-bottom:10px; margin-bottom:20px;">洗涤科技与衣物处理逻辑</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px; margin-bottom:25px;">
+                <div style="background:#fef9e7; border:1px solid #f39c12; padding:15px; border-radius:8px; font-size:13px; color:#7d6608;">💡 【技术专家】海尔在洗涤算法上的专利密度远超硬件结构，核心是“软件定义洗护”。</div>
+                <div style="background:#e8f8f5; border:1px solid #1abc9c; padding:15px; border-radius:8px; font-size:13px; color:#0e6251;">📈 【奥维数据】海尔/卡萨帝在10K+高端洗护市场份额超70%，其专利布局正从“洗净”转向“精细护理”以维持溢价。</div>
+                <div style="background:#ebf5fb; border:1px solid #3498db; padding:15px; border-radius:8px; font-size:13px; color:#1b4f72;">🏛️ 【战略咨询】海尔正构建“护城河级”的技术壁垒，通过算法门槛防止白牌或中低端竞品跟进。</div>
             </div>
-            <div class="mt-6 md:mt-0 flex gap-4">
-                <button onclick="filterReports('ALL')" class="px-4 py-2 rounded-full glass-card text-xs hover:fotile-bg-gold hover:text-slate-900 transition-all">全量</button>
-                <button onclick="filterReports('ROBAM')" class="px-4 py-2 rounded-full glass-card text-xs hover:fotile-bg-gold hover:text-slate-900 transition-all">老板电器</button>
-                <button onclick="filterReports('HAIER')" class="px-4 py-2 rounded-full glass-card text-xs hover:fotile-bg-gold hover:text-slate-900 transition-all">海尔/卡萨帝</button>
-            </div>
-        </header>
-
-        <!-- 统计概览 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="glass-card p-6 rounded-xl">
-                <p class="text-slate-400 text-xs mb-2">累计情报简报</p>
-                <p class="text-4xl font-bold fotile-gold" id="stat-total">--</p>
-            </div>
-            <div class="glass-card p-6 rounded-xl border-l-4 border-red-500">
-                <p class="text-slate-400 text-xs mb-2">高威胁专利发现</p>
-                <p class="text-4xl font-bold text-red-500">28+</p>
-            </div>
-            <div class="glass-card p-6 rounded-xl">
-                <p class="text-slate-400 text-xs mb-2">情报更新日期</p>
-                <p class="text-xl font-bold text-white uppercase" id="stat-last-update">--</p>
-            </div>
-        </div>
-
-        <!-- 报告矩阵 -->
-        <div id="report-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            <!-- 动态生成 -->
-        </div>
-
-        <footer class="mt-20 text-center text-slate-500 text-xs py-8 border-t border-slate-800">
-            FOTILE Strategic Department © 2026 | 系统版本 v1.0.0-Sentinel
-        </footer>
-    </div>
-
-    <script>
-        let allReports = [];
-
-        async function handleLogin() {
-            const password = document.getElementById('password').value;
-            const btn = document.getElementById('login-btn');
-            const error = document.getElementById('error-msg');
-
-            btn.disabled = true;
-            btn.innerText = '正在校验加密指令...';
-
-            try {
-                // 尝试获取加密的索引数据
-                const response = await fetch('data.bin');
-                if (!response.ok) throw new Error('Data file not found');
-                const encryptedData = await response.text();
-
-                // 尝试解密
-                const bytes = CryptoJS.AES.decrypt(encryptedData, password);
-                const decryptedStr = bytes.toString(CryptoJS.enc.Utf8);
-                
-                if (!decryptedStr) throw new Error('Decryption failed');
-
-                allReports = JSON.parse(decryptedStr);
-                
-                // 登录成功
-                document.getElementById('login-screen').classList.add('hidden');
-                const main = document.getElementById('main-content');
-                main.classList.remove('hidden');
-                setTimeout(() => main.classList.add('opacity-100'), 50);
-                
-                renderDashboard(allReports);
-            } catch (err) {
-                console.error(err);
-                error.classList.remove('hidden');
-                btn.disabled = false;
-                btn.innerText = '验证身份并进入';
-            }
-        }
-
-        function renderDashboard(reports) {
-            const grid = document.getElementById('report-grid');
-            grid.innerHTML = '';
-            
-            reports.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            reports.forEach(rep => {
-                const card = `
-                    <div class="glass-card rounded-2xl overflow-hidden report-card cursor-pointer" onclick="window.open('${rep.path}', '_blank')">
-                        <div class="h-32 fotile-bg-gold/10 flex items-center justify-center relative overflow-hidden">
-                            <div class="absolute top-4 right-4 bg-slate-900/80 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest text-slate-300">
-                                ${rep.brand}
-                            </div>
-                            <svg class="w-12 h-12 fotile-gold opacity-30" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"></path>
-                                <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"></path>
-                            </svg>
-                        </div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">${rep.date}</span>
-                                <span class="bg-red-500/20 text-red-500 px-2 py-0.5 rounded-full text-[9px] font-black uppercase">Level ${rep.threat || '3'}</span>
-                            </div>
-                            <h3 class="text-lg font-bold text-white mb-4 line-clamp-2 leading-snug">
-                                ${rep.title}
-                            </h3>
-                            <div class="flex items-center text-xs text-slate-400 group">
-                                <span class="group-hover:text-gold transition-all">查阅完整情报报告</span>
-                                <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                                </svg>
-                            </div>
-                        </div>
+        <div style='margin-bottom:15px;'><span style='font-weight:bold; color:#E67E22;'>🚩 路径一：智能洗护算法 (L3级)</span></div><div style='display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px; margin-bottom:25px;'>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121896823A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">一种衣物护理方法、装置、设备及介质</div>
                     </div>
-                `;
-                grid.innerHTML += card;
-            });
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121890917A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">洗涤设备的控制方法及洗涤设备</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121897987A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">控制指令的执行方法和装置、存储介质及电子设备</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121903104A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">配送路径规划方法、装置、程序产品、设备及存储介质</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121900849A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">洗碗机程序的显示方法、存储介质及电子装置</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN116145372B</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">一种衣物处理装置的控制方法及衣物处理装置</div>
+                    </div></div><div style='margin-bottom:15px;'><span style='font-weight:bold; color:#E67E22;'>🚩 路径二：高效动力与节能 (L2级)</span></div><div style='display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px; margin-bottom:25px;'>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121896816A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">一种洗涤设备的缓释投放装置、洗涤设备及其控制方法</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121898059A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">水箱及包括该水箱的制冰设备</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN118547466B</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">一种滚筒洗衣机</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121896811A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">衣物处理设备的控制方法、装置、设备和存储介质</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121653929B</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">衣物处理设备及其控制方法</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN115262190B</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">一种干衣机及具有辅助烘干装置的干衣机门体</div>
+                    </div></div></div>
+        <div style="background:white; border-radius:15px; padding:30px; margin-bottom:40px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
+            <div style="font-size:24px; color:#003366; font-weight:bold; border-bottom:3px solid #E67E22; padding-bottom:10px; margin-bottom:20px;">交互界面与数字化资产</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px; margin-bottom:25px;">
+                <div style="background:#fef9e7; border:1px solid #f39c12; padding:15px; border-radius:8px; font-size:13px; color:#7d6608;">💡 【技术专家】卡萨帝正推进“家电家具化”，UI重心从控制转向情感交互。</div>
+                <div style="background:#e8f8f5; border:1px solid #1abc9c; padding:15px; border-radius:8px; font-size:13px; color:#0e6251;">📈 【奥维数据】全屋智装渠道中，带屏交互家电的配套率增长24%，卡萨帝以此作为全屋生态的“入口”。</div>
+                <div style="background:#ebf5fb; border:1px solid #3498db; padding:15px; border-radius:8px; font-size:13px; color:#1b4f72;">🏛️ 【战略咨询】通过UI专利抢占用户交互时长，本质是家电企业的“互联网流量化”尝试。</div>
+            </div>
+        <div style='margin-bottom:15px;'><span style='font-weight:bold; color:#E67E22;'>🚩 路径一：UI/UX 界面设计</span></div><div style='display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px; margin-bottom:25px;'>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121900849A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">洗碗机程序的显示方法、存储介质及电子装置</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN116145372B</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">一种衣物处理装置的控制方法及衣物处理装置</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN309936707S</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">电子设备的洗衣操控图形用户界面</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN309936700S</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">电子设备的饮用水控制图形用户界面</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN309936711S</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">电子设备的饮水控制图形用户界面</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN309936720S</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">电子设备的模式选择图形用户界面</div>
+                    </div></div><div style='margin-bottom:15px;'><span style='font-weight:bold; color:#E67E22;'>🚩 路径二：智慧联控生态</span></div><div style='display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px; margin-bottom:25px;'>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN115323701B</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">衣物处理装置及其控制方法、洗衣机及其控制方法</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121875073A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">用于衣物处理设备的控制方法及衣物处理设备</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">AU2024414540A1</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">Refrigerator</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">AU2024345176A1</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">Drying system and laundry treatment apparatus</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">EP3971417B1</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">Linear compressor and set point control method</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">EP4726094A1</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">Control method and apparatus, and device and storage medium</div>
+                    </div></div></div>
+        <div style="background:white; border-radius:15px; padding:30px; margin-bottom:40px; box-shadow:0 10px 30px rgba(0,0,0,0.05);">
+            <div style="font-size:24px; color:#003366; font-weight:bold; border-bottom:3px solid #E67E22; padding-bottom:10px; margin-bottom:20px;">制冷系统与外观美学</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px; margin-bottom:25px;">
+                <div style="background:#fef9e7; border:1px solid #f39c12; padding:15px; border-radius:8px; font-size:13px; color:#7d6608;">💡 【技术专家】外观专利预示新产品线，方太需重点防守其“全嵌/零嵌”结构。</div>
+                <div style="background:#e8f8f5; border:1px solid #1abc9c; padding:15px; border-radius:8px; font-size:13px; color:#0e6251;">📈 【奥维数据】平嵌冰箱已成厨电一体化第一需求，海尔该领域专利数与线下销额呈正相关波动。</div>
+                <div style="background:#ebf5fb; border:1px solid #3498db; padding:15px; border-radius:8px; font-size:13px; color:#1b4f72;">🏛️ 【战略咨询】外观设计专利不仅是美学，更是“品牌识别资产”的法律武装，旨在形成视觉垄断。</div>
+            </div>
+        <div style='margin-bottom:15px;'><span style='font-weight:bold; color:#E67E22;'>🚩 路径一：高端外观美学</span></div><div style='display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px; margin-bottom:25px;'>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN224151135U</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">制冷设备</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN309936707S</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">电子设备的洗衣操控图形用户界面</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN309936700S</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">电子设备的饮用水控制图形用户界面</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN309936711S</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">电子设备的饮水控制图形用户界面</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN309936720S</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">电子设备的模式选择图形用户界面</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN309936719S</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">电子设备的饮品操控图形用户界面</div>
+                    </div></div><div style='margin-bottom:15px;'><span style='font-weight:bold; color:#E67E22;'>🚩 路径二：制冷架构优化</span></div><div style='display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px; margin-bottom:25px;'>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121898081A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">用于制冷设备的门体和制冷设备</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121898086A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">一种用于冰箱的抽屉组件及冰箱</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121898083A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">储物篮和冷柜</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121898084A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">储物篮和冷柜</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN224151135U</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">制冷设备</div>
+                    </div>
+                    <div style="border:1px solid #eee; border-radius:10px; padding:15px; background:#fff; height:100%;">
+                        <div style="width:100%; height:140px; background:#f0f2f5; display:flex; align-items:center; justify-content:center; color:#bdc3c7; font-size:12px;">[ 暂无专利附图 ]</div>
+                        <div style="font-size:11px; color:#999; margin-top:10px;">CN121898068A</div>
+                        <div style="font-size:13px; font-weight:bold; margin-top:5px;">冷柜</div>
+                    </div></div></div>
+    
+<div style="background:#2c3e50; color:#ecf0f1; border-radius:15px; padding:30px; margin-top:50px;">
+    <h3 style="color:#E67E22; border-bottom:1px solid #555; padding-bottom:10px;">📋 专利情报筛选逻辑 (Methodology)</h3>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; font-size:14px; line-height:1.8;">
+        <div>
+            <b style="color:#3498db;">Step 1: 全量漏斗 (Noise Reduction)</b><br>
+            基于 FOTILE 预设的 128 个核心关键词（含流体、热泵、算法、交互等），对原始 XLSX 中的数千条数据进行一轮初筛，排除行政类、通用零配件等“非竞争性”专利。
+        </div>
+        <div>
+            <b style="color:#3498db;">Step 2: 频次热力权重 (Frequency Weighting)</b><br>
+            系统自动计算本期关键词聚类密度。如“洗涤+算法”频次出现异常峰值，系统会自动提升该品类的“威胁等级”并指派专家 Skill 进行深度解读。
+        </div>
+        <div>
+            <b style="color:#3498db;">Step 3: 语义二级聚类 (Semantic Clustering)</b><br>
+            采用 L2/L3 级分化模型。例如“洗护”大类下，自动分拆为“物理结构（L2）”与“智能控制（L3）”，确保穿透到技术执行层。
+        </div>
+        <div>
+            <b style="color:#3498db;">Step 4: 跨界专家校验 (Expert Audit)</b><br>
+            注入 AVC 零售逻辑与咨询公司战略逻辑，将“技术趋势”与“市场表现”进行交叉验证，确保每一条结论都有数据与商业逻辑双重支撑。
+        </div>
+    </div>
+</div>
 
-            // 更新统计
-            document.getElementById('stat-total').innerText = reports.length;
-            if (reports.length > 0) {
-                document.getElementById('stat-last-update').innerText = reports[0].date;
-            }
-        }
-
-        function filterReports(brand) {
-            if (brand === 'ALL') {
-                renderDashboard(allReports);
-            } else {
-                const filtered = allReports.filter(r => r.brand_key === brand);
-                renderDashboard(filtered);
-            }
-        }
-
-        // 监听回车键
-        document.getElementById('password').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') handleLogin();
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('haierV16Chart');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['洗护科技', '外观美学', '制冷架构', '交互UI'],
+                datasets: [{
+                    data: [439, 303, 208, 192],
+                    backgroundColor: ['#E67E22', '#3498db', '#95a5a6', '#003366'],
+                    borderRadius: 6
+                }]
+            },
+            options: { indexAxis: 'y', responsive: true, plugins: { legend: { display: false } } }
         });
     </script>
-</body>
-</html>
+    </div></body></html>
+    
